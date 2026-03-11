@@ -23,6 +23,7 @@ struct CustomTextField: View {
                 }
                 TextField("", text: $text)
                     .foregroundColor(.primary)
+                    .onTapGesture { } // Hack: Prevents 'System gesture gate timed out' Xcode bug
             }
         }
         .padding()
@@ -60,9 +61,11 @@ struct CustomSecureField: View {
                 if isVisible {
                     TextField("", text: $text)
                         .foregroundColor(.primary)
+                        .onTapGesture { }
                 } else {
                     SecureField("", text: $text)
                         .foregroundColor(.primary)
+                        .onTapGesture { }
                 }
             }
             
