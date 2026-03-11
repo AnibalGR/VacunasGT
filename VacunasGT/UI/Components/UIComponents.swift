@@ -11,10 +11,15 @@ struct CustomTextField: View {
                 .foregroundColor(.secondary)
                 .frame(width: 20)
             
+            // Usamos un simple overlay de alineación para Custom Placeholder o 
+            // directamente le pasamos la info si permite styling.
+            // Para mantener compatibilidad pasamos placeholder a TextField
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(placeholder)
                         .foregroundColor(.secondary)
+                        // Evita que el placeholder intercepte toques
+                        .allowsHitTesting(false)
                 }
                 TextField("", text: $text)
                     .foregroundColor(.primary)
@@ -48,6 +53,8 @@ struct CustomSecureField: View {
                 if text.isEmpty {
                     Text(placeholder)
                         .foregroundColor(.secondary)
+                        // Evita que el placeholder intercepte toques
+                        .allowsHitTesting(false)
                 }
                 
                 if isVisible {

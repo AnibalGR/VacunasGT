@@ -126,6 +126,6 @@ struct AddChildView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
-}
+
 
 
