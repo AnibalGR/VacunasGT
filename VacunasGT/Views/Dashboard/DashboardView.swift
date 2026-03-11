@@ -5,12 +5,7 @@ struct DashboardView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     
     private var resolvedChildren: [ChildDTO] {
-        if !childrenViewModel.children.isEmpty {
-            return childrenViewModel.children
-        } else if let fromLogin = authViewModel.currentUser?.children, !fromLogin.isEmpty {
-            return fromLogin
-        }
-        return []
+        return childrenViewModel.children
     }
     
     @State private var showingAddChild = false

@@ -48,7 +48,7 @@ class AuthViewModel: ObservableObject {
             do {
                 let profile = try await childrenService.getUserProfile()
                 self.currentUser = profile.asUser
-                // Actualizar ChildrenViewModel si es necesario se hará por EnvironmentObject externo
+                // Dejamos que DashboardView dispare fetchChildren() al aparecer
             } catch {
                 // Si /user falla, continuamos con los datos del login
                 print("Fallo al obtener /user: \(error)")

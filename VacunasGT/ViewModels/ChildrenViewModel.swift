@@ -159,8 +159,13 @@ class ChildrenViewModel: ObservableObject {
         hasError = false
         do {
             _ = try await ChildrenService().deleteChild(uuid: uuid)
-            children.removeAll { $0.uuid == uuid }
-            isLoading = false
+            
+            // Diferir la mutación para el siguiente ciclo del runloop
+            // y evitar el "Publishing changes from within view updates"
+            Task { @MainActor in
+                self.children.removeAll { $0.uuid == uuid }
+                self.isLoading = false
+            }
             return true
         } catch {
             handleError(error)

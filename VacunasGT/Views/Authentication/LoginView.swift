@@ -8,30 +8,27 @@ struct LoginView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.brandBackground.ignoresSafeArea()
+            VStack(spacing: 0) {
+                // Header Curvo que ignora safe area superior
+                HeaderView()
                 
-                VStack(spacing: 0) {
-                    // Header Curvo que ignora safe area superior
-                    HeaderView()
+                VStack(spacing: 25) {
                     
-                    VStack(spacing: 25) {
-                        
-                        // Campos de Texto
-                        CustomTextField(text: $email, placeholder: "Correo electrónico", icon: "envelope")
-                            .keyboardType(.emailAddress)
-                            .autocapitalization(.none)
-                        
-                        CustomSecureField(text: $password, isVisible: $isPasswordVisible, placeholder: "Contraseña", icon: "lock")
+                    // Campos de Texto
+                    CustomTextField(text: $email, placeholder: "Correo electrónico", icon: "envelope")
+                        .keyboardType(.emailAddress)
+                        .autocapitalization(.none)
                     
-                        // Manejo de Errores
-                        if authViewModel.hasError, let errorMsg = authViewModel.errorMessage {
+                    CustomSecureField(text: $password, isVisible: $isPasswordVisible, placeholder: "Contraseña", icon: "lock")
+                
+                    // Manejo de Errores
+                    if authViewModel.hasError, let errorMsg = authViewModel.errorMessage {
                         Text(errorMsg)
                             .foregroundColor(.red)
                             .font(.caption)
                             .multilineTextAlignment(.center)
                     }
-                    
+                
                     // Botón Iniciar Sesión
                     Button(action: {
                         Task {
@@ -67,8 +64,8 @@ struct LoginView: View {
                 .padding(.horizontal, 30)
                 .padding(.top, 40)
                 
-                }
             }
+            .background(Color.brandBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
     }

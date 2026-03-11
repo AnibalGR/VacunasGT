@@ -21,9 +21,6 @@ struct AddChildView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.brandBackground.ignoresSafeArea()
-                
                 ScrollView {
                     VStack(spacing: 25) {
                         // Header personalizado para mayor contraste en el modal
@@ -115,6 +112,7 @@ struct AddChildView: View {
                     .padding(30)
                 }
             }
+            .background(Color.brandBackground.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
