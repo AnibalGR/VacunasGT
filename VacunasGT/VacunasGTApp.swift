@@ -12,7 +12,11 @@ import SwiftData
 struct VacunasGTApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Parent.self, // Agregado
+            Child.self,
+            Vaccine.self,
+            VaccinationRecord.self,
+            GrowthRecord.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -23,10 +27,40 @@ struct VacunasGTApp: App {
         }
     }()
 
+    @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var childrenViewModel = ChildrenViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentViewWrapper()
+                .environmentObject(authViewModel)
+                .environmentObject(childrenViewModel)
         }
         .modelContainer(sharedModelContainer)
     }
 }
+
+struct ContentViewWrapper: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @Query private var parents: [Parent]
+    @State private var isSplashScreenActive = true
+    
+    var body: some View {
+        if isSplashScreenActive {
+            SplashView()
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                        withAnimation {
+                            isSplashScreenActive = false
+                        }
+                    }
+                }
+        } else if !authViewModel.isAuthenticated {
+            LoginView()
+        } else {
+            // Usuario Autenticado -> Mostrar TabView (Por ahora obviamos Onboarding local si no es necesario)
+            MainTabView()
+        }
+    }
+}
+

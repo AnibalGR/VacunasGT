@@ -96,8 +96,4 @@ struct ChildEditorView: View {
     }
 }
 
-#Preview {
-    let vm = ChildrenViewModel()
-    let sample = ChildDTO(id: "1", uuid: "uuid", name: "Giulia Camila", birth_date: "2025-02-16", gender: "female", blood_type: "A+", parent_profile_id: 1, age_in_months: 12, vaccines: [], growth_measurements: [])
-    return ChildEditorView(child: sample).environmentObject(vm)
-}
+

@@ -1,0 +1,75 @@
+@preconcurrency import Foundation
+
+/// Servicio para gestionar los expedientes de los niños
+final class ChildrenService: Sendable {
+    
+    /// Obtiene la lista de todos los niños del padre autenticado
+    func getChildren() async throws -> [ChildDTO] {
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children", method: "GET", requiresAuth: true)
+        let response: APIResponse<[ChildDTO]> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<[ChildDTO]>.self)
+        return response.data
+    }
+    
+    /// Obtiene el perfil del usuario autenticado con sus hijos
+    func getUserProfile() async throws -> UserProfileDTO {
+        let request = try NetworkManager.shared.createRequest(endpoint: "/user", method: "GET", requiresAuth: true)
+        let profile: UserProfileDTO = try await NetworkManager.shared.fetch(request: request, responseType: UserProfileDTO.self)
+        return profile
+    }
+    
+    /// Registra un nuevo niño
+    func createChild(payload: CreateChildRequest) async throws -> ChildDTO {
+        let body = try JSONEncoder().encode(payload)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children", method: "POST", body: body, requiresAuth: true)
+        let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
+        return response.data
+    }
+    
+    /// Actualiza un niño existente
+    func updateChild(uuid: String, payload: UpdateChildRequest) async throws -> ChildDTO {
+        let body = try JSONEncoder().encode(payload)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "PUT", body: body, requiresAuth: true)
+        let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
+        return response.data
+    }
+
+    /// Elimina un niño existente
+    @discardableResult
+    func deleteChild(uuid: String) async throws -> APIMessageResponse {
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "DELETE", requiresAuth: true)
+        let response: APIMessageResponse = try await NetworkManager.shared.fetch(request: request, responseType: APIMessageResponse.self)
+        return response
+    }
+    
+    /// Obtiene el récord médico completo de un niño (incluye vacunas y crecimiento)
+    func getChildRecord(uuid: String) async throws -> ChildFullRecordDTO {
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "GET", requiresAuth: true)
+        let response: APIResponse<ChildFullRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildFullRecordDTO>.self)
+        return response.data
+    }
+}
+
+/// Servicio para gestionar registros de vacunación
+final class VaccinationService {
+    
+    /// Registra la aplicación de una vacuna para un niño específico
+    func recordVaccination(childUUID: String, payload: CreateVaccinationRequest) async throws -> VaccinationRecordDTO {
+        let body = try JSONEncoder().encode(payload)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/vaccinations", method: "POST", body: body, requiresAuth: true)
+        let response: APIResponse<VaccinationRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<VaccinationRecordDTO>.self)
+        return response.data
+    }
+}
+
+/// Servicio para gestionar registros de crecimiento
+final class GrowthService {
+    
+    /// Registra un nuevo control de peso/talla
+    func recordGrowth(childUUID: String, payload: CreateGrowthRecordRequest) async throws -> GrowthRecordDTO {
+        let body = try JSONEncoder().encode(payload)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/growth_records", method: "POST", body: body, requiresAuth: true)
+        let response: APIResponse<GrowthRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<GrowthRecordDTO>.self)
+        return response.data
+    }
+}
+
