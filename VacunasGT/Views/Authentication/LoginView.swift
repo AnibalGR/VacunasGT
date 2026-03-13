@@ -65,6 +65,7 @@ struct LoginView: View {
                 .padding(.top, 40)
                 
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .background(Color.brandBackground.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }

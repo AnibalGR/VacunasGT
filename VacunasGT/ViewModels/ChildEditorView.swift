@@ -9,6 +9,8 @@ struct ChildEditorView: View {
     @State private var birthDate: Date
     @State private var gender: String
     @State private var bloodType: String
+    
+    @State private var showSuccessAlert = false
 
     init(child: ChildDTO) {
         self.child = child
@@ -87,13 +89,20 @@ struct ChildEditorView: View {
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)
+            .alert("Cambios guardados", isPresented: $showSuccessAlert) {
+                Button("Aceptar", role: .cancel) { dismiss() }
+            } message: {
+                Text("Los datos del paciente han sido actualizados exitosamente.")
+            }
         }
     }
 
     private func save() {
         Task {
             let success = await viewModel.updateChild(uuid: child.uuid, name: name, birthDate: birthDate, gender: gender, bloodType: bloodType.isEmpty ? nil : bloodType)
-            if success { dismiss() }
+            if success { 
+                showSuccessAlert = true 
+            }
         }
     }
 }

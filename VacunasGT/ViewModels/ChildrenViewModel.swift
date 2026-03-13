@@ -143,6 +143,9 @@ class ChildrenViewModel: ObservableObject {
             if let index = children.firstIndex(where: { $0.uuid == uuid }) {
                 children[index] = updated
             }
+            // Refetch in order to immediately reflect changes on DetailView Header
+            await fetchChildRecord(uuid: uuid)
+            
             isLoading = false
             return true
         } catch {
