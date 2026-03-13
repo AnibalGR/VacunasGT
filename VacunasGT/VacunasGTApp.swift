@@ -35,6 +35,7 @@ struct VacunasGTApp: App {
             ContentViewWrapper()
                 .environmentObject(authViewModel)
                 .environmentObject(childrenViewModel)
+                .preferredColorScheme(.light)
         }
         .modelContainer(sharedModelContainer)
     }
