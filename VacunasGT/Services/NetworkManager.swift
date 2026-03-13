@@ -10,7 +10,6 @@ final class NetworkManager: @unchecked Sendable {
     
     private init() {}
     
-    /// Crea y configura un URLRequest con los headers por defecto
     func createRequest(endpoint: String, method: String, body: Data? = nil, requiresAuth: Bool = true) throws -> URLRequest {
         guard let url = URL(string: "\(baseURL)\(endpoint)") else {
             throw NetworkError.invalidURL

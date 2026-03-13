@@ -113,19 +113,19 @@ struct AddChildView: View {
                     }
                     .padding(30)
                 }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Cancelar") {
+                            dismiss()
+                        }
+                        .foregroundColor(.brandNavy)
+                        .font(.subheadline.bold())
+                    }
+                }
+                .toolbarBackground(.hidden, for: .navigationBar)
             }
             .background(Color.brandBackground.ignoresSafeArea())
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancelar") {
-                        dismiss()
-                    }
-                    .foregroundColor(.brandNavy)
-                    .font(.subheadline.bold())
-                }
-            }
-            .toolbarBackground(.hidden, for: .navigationBar)
         }
     }
 
