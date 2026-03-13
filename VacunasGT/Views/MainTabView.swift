@@ -9,8 +9,8 @@ struct MainTabView: View {
                     Label("Inicio", systemImage: "house.fill")
                 }
             
-            // Reutilizamos Dashboard para el listado de "Niños" (pueden ser filtros distintos luego)
-            DashboardView()
+            // Gestión de Niños
+            ChildrenListView()
                 .tabItem {
                     Label("Niños", systemImage: "person.2.fill")
                 }

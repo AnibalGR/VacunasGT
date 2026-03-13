@@ -24,7 +24,7 @@ enum NetworkError: Error, LocalizedError {
     case unauthorized // 401
     case unknown(Error)
     
-    var errorDescription: String? {
+    @MainActor var errorDescription: String? {
         switch self {
         case .invalidURL:
             return "La URL proporcionada no es válida."

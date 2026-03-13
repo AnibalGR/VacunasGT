@@ -54,6 +54,23 @@ struct DashboardView: View {
                         } else if resolvedChildren.isEmpty {
                             EmptyChildrenView(showingAddChild: $showingAddChild)
                         } else {
+                            // Header con botón de agregar
+                            HStack {
+                                Text("Mis Niños")
+                                    .font(.headline)
+                                    .foregroundColor(.brandNavy)
+                                Spacer()
+                                Button(action: { showingAddChild = true }) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "plus.circle.fill")
+                                        Text("Agregar")
+                                            .font(.subheadline.bold())
+                                    }
+                                    .foregroundColor(.brandNavy)
+                                }
+                            }
+                            .padding(.horizontal)
+                            
                             VStack(spacing: 15) {
                                 ForEach(resolvedChildren) { child in
                                     NavigationLink(destination: ChildDetailView(childUUID: child.uuid, childName: child.name)) {
