@@ -47,6 +47,7 @@ struct AddVaccinationView: View {
                                     }
                                 }
                                 .pickerStyle(.menu)
+                                .tint(.primary)
                                 .padding(8)
                                 .frame(maxWidth: .infinity)
                                 .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
@@ -61,6 +62,7 @@ struct AddVaccinationView: View {
                                 DatePicker("Fecha de Aplicación", selection: $applicationDate, displayedComponents: .date)
                                     .labelsHidden()
                                     .datePickerStyle(.graphical)
+                                    .tint(.brandNavy)
                                     .padding(8)
                                     .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
                                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.black.opacity(0.12), lineWidth: 1))

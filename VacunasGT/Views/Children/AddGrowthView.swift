@@ -31,6 +31,7 @@ struct AddGrowthView: View {
                                 DatePicker("Fecha del Control", selection: $recordedAt, displayedComponents: .date)
                                     .labelsHidden()
                                     .datePickerStyle(.graphical)
+                                    .tint(.brandNavy)
                                     .padding(8)
                                     .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
                                     .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.black.opacity(0.12), lineWidth: 1))

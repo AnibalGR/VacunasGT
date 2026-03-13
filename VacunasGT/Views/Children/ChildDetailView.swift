@@ -39,6 +39,7 @@ struct ChildDetailView: View {
                 Text("Info").tag(2)
             }
             .pickerStyle(.segmented)
+            .tint(.brandNavy)
             .padding()
             .background(Color.brandBackground)
             

@@ -50,6 +50,7 @@ struct AddChildView: View {
                             DatePicker("Fecha de Nacimiento", selection: $birthDate, displayedComponents: .date)
                                 .labelsHidden()
                                 .datePickerStyle(.graphical)
+                                .tint(.brandNavy)
                                 .padding(8)
                                 .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
                                 .overlay(
@@ -68,6 +69,7 @@ struct AddChildView: View {
                                 Text("Femenino").tag("female")
                             }
                             .pickerStyle(.segmented)
+                            .tint(.brandNavy)
                             .padding(6)
                             .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
                             .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.black.opacity(0.12), lineWidth: 1))
