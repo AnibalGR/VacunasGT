@@ -11,6 +11,8 @@ struct ChildEditorView: View {
     @State private var bloodType: String
     
     @State private var showSuccessAlert = false
+    @State private var showErrorAlert = false
+    @State private var localErrorMessage = ""
 
     init(child: ChildDTO) {
         self.child = child
@@ -94,6 +96,11 @@ struct ChildEditorView: View {
             } message: {
                 Text("Los datos del paciente han sido actualizados exitosamente.")
             }
+            .alert("Error al guardar", isPresented: $showErrorAlert) {
+                Button("Entendido", role: .cancel) { }
+            } message: {
+                Text(localErrorMessage)
+            }
         }
     }
 
@@ -102,6 +109,9 @@ struct ChildEditorView: View {
             let success = await viewModel.updateChild(uuid: child.uuid, name: name, birthDate: birthDate, gender: gender, bloodType: bloodType.isEmpty ? nil : bloodType)
             if success { 
                 showSuccessAlert = true 
+            } else {
+                localErrorMessage = viewModel.errorMessage ?? "Ocurrió un error inesperado al contactar con el servidor."
+                showErrorAlert = true
             }
         }
     }
