@@ -85,6 +85,38 @@ extension ChildDTO {
         formatter.formatOptions = [.withFullDate]
         return formatter.date(from: birth_date) ?? Date()
     }
+    
+    var formattedBirthDate: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "es_ES")
+        formatter.dateFormat = "d MMMM yyyy"
+        return formatter.string(from: birthDate).capitalized
+    }
+    
+    var ageString: String {
+        let now = Date()
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: birthDate, to: now)
+        
+        var ageText = ""
+        
+        if let years = components.year, years > 0 {
+            ageText += "\(years) \(years == 1 ? "año" : "años") "
+        }
+        if let months = components.month, months > 0 {
+            ageText += "\(months) \(months == 1 ? "mes" : "meses") "
+        }
+        
+        // Mostrar días siempre si tiene menos de un año o no se han calculado meses y años todavía.
+        // Opcionalmente, mostrar días si el usuario lo pidió. El usuario dice "Años meses y días", así que mostraremos los tres.
+        if let days = components.day {
+            if days > 0 || (components.year == 0 && components.month == 0) {
+                 ageText += "\(days) \(days == 1 ? "día" : "días")"
+            }
+        }
+        
+        return ageText.trimmingCharacters(in: .whitespaces).isEmpty ? "Recién nacido" : ageText.trimmingCharacters(in: .whitespaces)
+    }
 }
 
 /// Récord completo de un niño incluyendo historial de vacunas y crecimiento

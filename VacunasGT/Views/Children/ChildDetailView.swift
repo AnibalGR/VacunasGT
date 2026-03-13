@@ -248,7 +248,8 @@ struct ChildInfoView: View {
         List {
             Section(header: Text("Datos Generales")) {
                 InfoRow(label: "Nombre", value: child.name)
-                InfoRow(label: "Fecha de Nacimiento", value: child.birth_date)
+                InfoRow(label: "Fecha de Nacimiento", value: child.formattedBirthDate)
+                InfoRow(label: "Edad", value: child.ageString)
                 InfoRow(label: "Género", value: child.genderDisplay)
                 InfoRow(label: "Tipo de Sangre", value: child.blood_type ?? "No especificado")
             }
