@@ -27,8 +27,18 @@ final class ChildrenService: Sendable {
     
     /// Actualiza un niño existente
     func updateChild(uuid: String, payload: UpdateChildRequest) async throws -> ChildDTO {
-        let body = try JSONEncoder().encode(payload)
-        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "PUT", body: body, requiresAuth: true)
+        var dict: [String: Any] = [
+            "name": payload.name,
+            "birth_date": payload.birth_date,
+            "gender": payload.gender,
+            "_method": "PUT"
+        ]
+        if let bloodType = payload.blood_type {
+            dict["blood_type"] = bloodType
+        }
+        
+        let body = try JSONSerialization.data(withJSONObject: dict)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "POST", body: body, requiresAuth: true)
         let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
         return response.data
     }
