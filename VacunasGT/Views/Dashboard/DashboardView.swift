@@ -121,31 +121,23 @@ struct DashboardView: View {
 
 struct ChildCard: View {
     let child: ChildDTO
-    
+
     var body: some View {
         HStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(child.gender.lowercased() == "male" ? Color.blue.opacity(0.1) : Color.pink.opacity(0.1))
-                    .frame(width: 60, height: 60)
-                
-                Image(systemName: "person.fill")
-                    .font(.title2)
-                    .foregroundColor(child.gender.lowercased() == "male" ? .blue : .pink)
-            }
-            
+            ChildAvatarView(childUUID: child.uuid, name: child.name, size: 56)
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(child.name)
                     .font(.headline)
                     .foregroundColor(.brandNavy)
-                
+
                 Text(child.genderDisplay)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             Image(systemName: "chevron.right")
                 .font(.caption.bold())
                 .foregroundColor(.brandNavy.opacity(0.3))

@@ -12,11 +12,12 @@ import SwiftData
 struct VacunasGTApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Parent.self, // Agregado
+            Parent.self,
             Child.self,
             Vaccine.self,
             VaccinationRecord.self,
-            GrowthRecord.self
+            GrowthRecord.self,
+            ChildPhoto.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

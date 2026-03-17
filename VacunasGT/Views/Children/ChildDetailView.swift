@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import SwiftData
 
 struct ChildDetailView: View {
     let childUUID: String
@@ -6,32 +8,44 @@ struct ChildDetailView: View {
     
     @EnvironmentObject var viewModel: ChildrenViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
     @State private var selectedTab = 0
     @State private var showingAddVaccination = false
     @State private var showingAddGrowth = false
     @State private var showingDeleteConfirmation = false
-    
+    @State private var photoItem: PhotosPickerItem? = nil
+    @State private var showingPhotoPicker = false
+
     var body: some View {
         VStack(spacing: 0) {
             // Header con info del niño
-            VStack(spacing: 15) {
-                Circle()
-                    .fill(Color.white.opacity(0.2))
-                    .frame(width: 80, height: 80)
-                    .overlay(
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 40))
-                            .foregroundColor(.white)
+            VStack(spacing: 12) {
+                // Toca el avatar para cambiar la foto
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    ChildAvatarView(
+                        childUUID: childUUID,
+                        name: childName,
+                        size: 88,
+                        showEditBadge: true
                     )
-                
+                }
+                .onChange(of: photoItem) { _, item in
+                    Task { await savePhoto(item) }
+                }
+
                 Text(childName)
                     .font(.title2.bold())
                     .foregroundColor(.white)
+
+                Text("Toca la foto para cambiarla")
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 30)
+            .padding(.vertical, 28)
             .background(Color.brandNavy)
-            
+
             // Selector de Pestañas
             Picker("Sección", selection: $selectedTab) {
                 Text("Vacunas").tag(0)
@@ -132,7 +146,30 @@ struct ChildDetailView: View {
             Text(viewModel.errorMessage ?? "Ocurrió un error inesperado")
         }
     }
+
+    // MARK: - Helpers
+
+    /// Guarda o actualiza la foto del niño en SwiftData
+    private func savePhoto(_ item: PhotosPickerItem?) async {
+        guard let item,
+              let data = try? await item.loadTransferable(type: Data.self),
+              let uiImage = UIImage(data: data),
+              let compressed = uiImage.jpegData(compressionQuality: 0.75)
+        else { return }
+
+        // Upsert: buscar registro existente o crear uno nuevo
+        let descriptor = FetchDescriptor<ChildPhoto>(
+            predicate: #Predicate { $0.childUUID == childUUID }
+        )
+        if let existing = try? modelContext.fetch(descriptor).first {
+            existing.imageData = compressed
+        } else {
+            modelContext.insert(ChildPhoto(childUUID: childUUID, imageData: compressed))
+        }
+        try? modelContext.save()
+    }
 }
+
 
 struct VaccinationsList: View {
     let vaccinations: [VaccinationRecordDTO]
