@@ -8,18 +8,28 @@ import SwiftData
 
 // MARK: - DTO para la respuesta del API
 
-private struct VaccineCatalogResponse: Decodable {
-    let data: [VaccineDTO]
+fileprivate struct VaccineCatalogAPIResponse: Decodable {
+    let data: [VaccineAPIDTO]
 }
 
-private struct VaccineDTO: Decodable {
+fileprivate struct VaccineAPIDTO: Decodable {
     let id: String
     let name: String
-    let dose_number: Int
-    let recommended_age_months: Int
+    let doseNumber: Int
+    let recommendedAgeMonths: Int
     let sector: String
     let description: String?
-    let is_mandatory: Bool
+    let isMandatory: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case doseNumber = "dose_number"
+        case recommendedAgeMonths = "recommended_age_months"
+        case sector
+        case description
+        case isMandatory = "is_mandatory"
+    }
 }
 
 // MARK: - Manager
@@ -41,7 +51,7 @@ final class VaccineManager {
 
             let response = try await NetworkManager.shared.fetch(
                 request: request,
-                responseType: VaccineCatalogResponse.self
+                responseType: VaccineCatalogAPIResponse.self
             )
 
             // Borrar catálogo local viejo
@@ -52,11 +62,11 @@ final class VaccineManager {
                 let vaccine = Vaccine(
                     serverId: dto.id,
                     nombre: dto.name,
-                    dosis: "Dosis \(dto.dose_number)",
-                    edadRecomendadaMeses: dto.recommended_age_months,
+                    dosis: "Dosis \(dto.doseNumber)",
+                    edadRecomendadaMeses: dto.recommendedAgeMonths,
                     descripcion: dto.description ?? "",
                     isPrivate: dto.sector == "private",
-                    isMandatory: dto.is_mandatory
+                    isMandatory: dto.isMandatory
                 )
                 modelContext.insert(vaccine)
             }
