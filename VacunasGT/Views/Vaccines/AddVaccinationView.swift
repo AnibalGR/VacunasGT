@@ -73,7 +73,7 @@ struct AddVaccinationView: View {
                             }
                             .padding(.horizontal)
 
-                            CustomTextField(text: $healthFacility, placeholder: "Centro de Salud / Hospital", icon: "hospital.fill")
+                            CustomTextField(text: $healthFacility, placeholder: "Centro de Salud / Hospital", icon: "cross.case.fill")
                                 .padding(.horizontal)
 
                             CustomTextField(text: $notes, placeholder: "Notas adicionales", icon: "note.text")
