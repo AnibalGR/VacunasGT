@@ -94,8 +94,13 @@ struct ChildDetailView: View {
             }
         }
         .sheet(isPresented: $showingAddVaccination) {
-            AddVaccinationView(childUUID: childUUID)
-                .environmentObject(viewModel)
+            AddVaccinationView(
+                childUUID: childUUID,
+                appliedVaccineCatalogIds: Set(
+                    (viewModel.selectedChildRecord?.vaccinations ?? []).map(\.vaccine_catalog_id)
+                )
+            )
+            .environmentObject(viewModel)
         }
         .sheet(isPresented: $showingAddGrowth) {
             AddGrowthView(childUUID: childUUID)
