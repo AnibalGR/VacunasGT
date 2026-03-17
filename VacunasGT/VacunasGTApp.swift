@@ -43,24 +43,31 @@ struct VacunasGTApp: App {
 
 struct ContentViewWrapper: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @Environment(\.modelContext) private var modelContext
     @Query private var parents: [Parent]
     @State private var isSplashScreenActive = true
-    
+
     var body: some View {
-        if isSplashScreenActive {
-            SplashView()
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                        withAnimation {
-                            isSplashScreenActive = false
+        Group {
+            if isSplashScreenActive {
+                SplashView()
+                    .onAppear {
+                        // Inyectar el contexto de SwiftData en el AuthViewModel
+                        authViewModel.modelContext = modelContext
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation {
+                                isSplashScreenActive = false
+                            }
                         }
                     }
-                }
-        } else if !authViewModel.isAuthenticated {
-            LoginView()
-        } else {
-            // Usuario Autenticado -> Mostrar TabView (Por ahora obviamos Onboarding local si no es necesario)
-            MainTabView()
+            } else if !authViewModel.isAuthenticated {
+                LoginView()
+                    .onAppear {
+                        authViewModel.modelContext = modelContext
+                    }
+            } else {
+                MainTabView()
+            }
         }
     }
 }

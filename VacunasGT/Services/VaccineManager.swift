@@ -2,70 +2,74 @@
 //  VaccineManager.swift
 //  VacunasGT
 //
-//  Created by Anibal Gramajo on 30/01/26.
-//
 
 import Foundation
 import SwiftData
 
+// MARK: - DTO para la respuesta del API
+
+private struct VaccineCatalogResponse: Decodable {
+    let data: [VaccineDTO]
+}
+
+private struct VaccineDTO: Decodable {
+    let id: String
+    let name: String
+    let dose_number: Int
+    let recommended_age_months: Int
+    let sector: String
+    let description: String?
+    let is_mandatory: Bool
+}
+
+// MARK: - Manager
+
 final class VaccineManager {
     static let shared = VaccineManager()
-    
+
     private init() {}
-    
-    // Esquema Nacional de Vacunación de Guatemala (simplificado)
-    func preloadOfficialScheme(modelContext: ModelContext) {
-        // Verificar si ya existen vacunas para evitar duplicados
-        let descriptor = FetchDescriptor<Vaccine>()
-        let count = try? modelContext.fetchCount(descriptor)
-        
-        if count == 0 {
-            let vacunas = [
-                // Al Nacer
-                Vaccine(nombre: "BCG", dosis: "Única", edadRecomendadaMeses: 0, descripcion: "Tuberculosis (Meninge y Miliar)"),
-                Vaccine(nombre: "Hepatitis B", dosis: "Neonatal", edadRecomendadaMeses: 0, descripcion: "Previene la transmisión vertical de madre a hijo"),
-                
-                // 2 Meses
-                Vaccine(nombre: "Polio", dosis: "1ra Dosis", edadRecomendadaMeses: 2, descripcion: "IPV (Inyectada)"),
-                Vaccine(nombre: "Pentavalente", dosis: "1ra Dosis", edadRecomendadaMeses: 2, descripcion: "Difteria, Tétanos, Tosferina, HepB, H. Influenzae b"),
-                Vaccine(nombre: "Neumococo", dosis: "1ra Dosis", edadRecomendadaMeses: 2, descripcion: "Neumonía y Meningitis"),
-                Vaccine(nombre: "Rotavirus", dosis: "1ra Dosis", edadRecomendadaMeses: 2, descripcion: "Diarreas severas"),
-                
-                // 4 Meses
-                Vaccine(nombre: "Polio", dosis: "2da Dosis", edadRecomendadaMeses: 4, descripcion: "IPV"),
-                Vaccine(nombre: "Pentavalente", dosis: "2da Dosis", edadRecomendadaMeses: 4, descripcion: ""),
-                Vaccine(nombre: "Neumococo", dosis: "2da Dosis", edadRecomendadaMeses: 4, descripcion: ""),
-                Vaccine(nombre: "Rotavirus", dosis: "2da Dosis", edadRecomendadaMeses: 4, descripcion: ""),
-                
-                // 6 Meses
-                Vaccine(nombre: "Polio", dosis: "3ra Dosis", edadRecomendadaMeses: 6, descripcion: "OPV (Oral)"),
-                Vaccine(nombre: "Pentavalente", dosis: "3ra Dosis", edadRecomendadaMeses: 6, descripcion: ""),
-                
-                // 12 Meses (1 Año)
-                Vaccine(nombre: "SPR", dosis: "1ra Dosis", edadRecomendadaMeses: 12, descripcion: "Sarampión, Paperas y Rubéola"),
-                Vaccine(nombre: "Neumococo", dosis: "Refuerzo", edadRecomendadaMeses: 12, descripcion: ""),
-                
-                // 18 Meses (1 año y medio)
-                Vaccine(nombre: "SPR", dosis: "2da Dosis", edadRecomendadaMeses: 18, descripcion: ""),
-                Vaccine(nombre: "Polio", dosis: "1er Refuerzo", edadRecomendadaMeses: 18, descripcion: "OPV"),
-                Vaccine(nombre: "DPT", dosis: "1er Refuerzo", edadRecomendadaMeses: 18, descripcion: "Difteria, Tétanos y Tosferina"),
-                
-                // 4 Años
-                Vaccine(nombre: "Polio", dosis: "2do Refuerzo", edadRecomendadaMeses: 48, descripcion: "OPV"),
-                Vaccine(nombre: "DPT", dosis: "2do Refuerzo", edadRecomendadaMeses: 48, descripcion: "")
-            ]
-            
-            for vacuna in vacunas {
-                modelContext.insert(vacuna)
+
+    /// Sincroniza el catálogo de vacunas desde el servidor.
+    /// Reemplaza todos los registros locales con los del API.
+    /// Llamar después del login o al abrir la app con sesión activa.
+    func syncFromServer(modelContext: ModelContext) async {
+        do {
+            let request = try NetworkManager.shared.createRequest(
+                endpoint: "/vaccines",
+                method: "GET"
+            )
+
+            let response = try await NetworkManager.shared.fetch(
+                request: request,
+                responseType: VaccineCatalogResponse.self
+            )
+
+            // Borrar catálogo local viejo
+            try modelContext.delete(model: Vaccine.self)
+
+            // Insertar el nuevo catálogo del servidor
+            for dto in response.data {
+                let vaccine = Vaccine(
+                    serverId: dto.id,
+                    nombre: dto.name,
+                    dosis: "Dosis \(dto.dose_number)",
+                    edadRecomendadaMeses: dto.recommended_age_months,
+                    descripcion: dto.description ?? "",
+                    isPrivate: dto.sector == "private",
+                    isMandatory: dto.is_mandatory
+                )
+                modelContext.insert(vaccine)
             }
-            
-            try? modelContext.save()
-            print("Esquema de vacunas precargado exitosamente.")
+
+            try modelContext.save()
+            print("✅ Catálogo de vacunas sincronizado: \(response.data.count) vacunas.")
+        } catch {
+            print("⚠️ No se pudo sincronizar el catálogo de vacunas: \(error). Se usarán datos locales si existen.")
         }
     }
-    
-    // Calcula la fecha proyectada ideal para una vacuna basada en la fecha de nacimiento
+
+    /// Calcula la fecha proyectada ideal para una vacuna según la fecha de nacimiento.
     func calculateProjectedDate(birthDate: Date, months: Int) -> Date {
-        return Calendar.current.date(byAdding: .month, value: months, to: birthDate) ?? birthDate
+        Calendar.current.date(byAdding: .month, value: months, to: birthDate) ?? birthDate
     }
 }
