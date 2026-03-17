@@ -13,7 +13,7 @@ fileprivate struct VaccineCatalogAPIResponse: Decodable {
 }
 
 fileprivate struct VaccineAPIDTO: Decodable {
-    let id: String
+    let id: Int
     let name: String
     let doseNumber: Int
     let recommendedAgeMonths: Int
@@ -60,7 +60,7 @@ final class VaccineManager {
             // Insertar el nuevo catálogo del servidor
             for dto in response.data {
                 let vaccine = Vaccine(
-                    serverId: dto.id,
+                    serverId: String(dto.id),
                     nombre: dto.name,
                     dosis: "Dosis \(dto.doseNumber)",
                     edadRecomendadaMeses: dto.recommendedAgeMonths,
