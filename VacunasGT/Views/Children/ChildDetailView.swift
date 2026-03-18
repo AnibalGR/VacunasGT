@@ -23,7 +23,9 @@ struct ChildDetailView: View {
             VStack(spacing: 12) {
                 // Menú de opciones de foto
                 Menu {
-                    PhotosPicker(selection: $photoItem, matching: .images) {
+                    Button {
+                        showingPhotoPicker = true
+                    } label: {
                         Label("Cambiar foto", systemImage: "photo")
                     }
                     
@@ -43,6 +45,7 @@ struct ChildDetailView: View {
                         showEditBadge: true
                     )
                 }
+                .photosPicker(isPresented: $showingPhotoPicker, selection: $photoItem, matching: .images)
                 .onChange(of: photoItem) { _, item in
                     Task { await savePhoto(item) }
                 }
