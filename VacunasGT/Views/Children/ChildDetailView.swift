@@ -28,13 +28,11 @@ struct ChildDetailView: View {
                     } label: {
                         Label("Cambiar foto", systemImage: "photo")
                     }
-                    
-                    if viewModel.selectedChildRecord?.child.photo_url != nil {
-                        Button(role: .destructive) {
-                            Task { await deletePhotoLocal() }
-                        } label: {
-                            Label("Eliminar foto", systemImage: "trash")
-                        }
+
+                    Button(role: .destructive) {
+                        Task { await deletePhotoLocal() }
+                    } label: {
+                        Label("Eliminar foto", systemImage: "trash")
                     }
                 } label: {
                     ChildAvatarView(
