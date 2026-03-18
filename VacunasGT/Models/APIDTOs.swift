@@ -12,6 +12,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
     let blood_type: String?
     let parent_profile_id: Int?
     let age_in_months: Int?
+    let photo_url: String?
     let vaccines: [VaccinationRecordDTO]?
     let growth_measurements: [GrowthRecordDTO]?
 
@@ -19,6 +20,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         case id, uuid, name, birth_date, gender, blood_type
         case parent_profile_id
         case age_in_months
+        case photo_url
         case vaccines
         case growth_measurements
     }
@@ -32,6 +34,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         blood_type: String? = nil,
         parent_profile_id: Int? = nil,
         age_in_months: Int? = nil,
+        photo_url: String? = nil,
         vaccines: [VaccinationRecordDTO]? = nil,
         growth_measurements: [GrowthRecordDTO]? = nil
     ) {
@@ -43,6 +46,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         self.blood_type = blood_type
         self.parent_profile_id = parent_profile_id
         self.age_in_months = age_in_months
+        self.photo_url = photo_url
         self.vaccines = vaccines
         self.growth_measurements = growth_measurements
     }
@@ -65,6 +69,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         self.blood_type = try? container.decode(String.self, forKey: .blood_type)
         self.parent_profile_id = try? container.decode(Int.self, forKey: .parent_profile_id)
         self.age_in_months = try? container.decode(Int.self, forKey: .age_in_months)
+        self.photo_url = try? container.decode(String.self, forKey: .photo_url)
         self.vaccines = try? container.decode([VaccinationRecordDTO].self, forKey: .vaccines)
         self.growth_measurements = try? container.decode([GrowthRecordDTO].self, forKey: .growth_measurements)
     }

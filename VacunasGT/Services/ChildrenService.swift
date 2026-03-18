@@ -57,6 +57,33 @@ final class ChildrenService: Sendable {
         let response: APIResponse<ChildFullRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildFullRecordDTO>.self)
         return response.data
     }
+
+    /// Sube la foto de perfil al servidor
+    func uploadPhoto(uuid: String, imageData: Data) async throws -> ChildDTO {
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "POST", requiresAuth: true)
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        
+        // Simular PUT para Laravel (campo _method)
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"_method\"\r\n\r\n".data(using: .utf8)!)
+        body.append("PUT\r\n".data(using: .utf8)!)
+        
+        // Campo 'photo'
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"photo\"; filename=\"profile.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+        
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+        
+        let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
+        return response.data
+    }
 }
 
 /// Servicio para gestionar registros de vacunación

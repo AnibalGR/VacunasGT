@@ -26,6 +26,7 @@ struct ChildDetailView: View {
                     ChildAvatarView(
                         childUUID: childUUID,
                         name: childName,
+                        photoURL: viewModel.selectedChildRecord?.child.photo_url,
                         size: 88,
                         showEditBadge: true
                     )
@@ -167,6 +168,11 @@ struct ChildDetailView: View {
             modelContext.insert(ChildPhoto(childUUID: childUUID, imageData: compressed))
         }
         try? modelContext.save()
+
+        // Sincronizar con el servidor
+        Task {
+            await viewModel.uploadChildPhoto(uuid: childUUID, imageData: compressed)
+        }
     }
 }
 

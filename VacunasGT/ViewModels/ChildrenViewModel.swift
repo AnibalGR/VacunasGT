@@ -176,6 +176,34 @@ class ChildrenViewModel: ObservableObject {
             return false
         }
     }
+
+    /// Sube una foto de perfil al servidor y actualiza localmente
+    func uploadChildPhoto(uuid: String, imageData: Data) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        hasError = false
+        
+        do {
+            let updatedChild = try await childrenService.uploadPhoto(uuid: uuid, imageData: imageData)
+            
+            // Actualizar en la lista local
+            if let index = children.firstIndex(where: { $0.uuid == uuid }) {
+                children[index] = updatedChild
+            }
+            
+            // Refrescar el récord detallado si es el niño seleccionado
+            if selectedChildRecord?.child.uuid == uuid {
+                await fetchChildRecord(uuid: uuid)
+            }
+            
+            isLoading = false
+            return true
+        } catch {
+            handleError(error)
+            isLoading = false
+            return false
+        }
+    }
     
     private func handleError(_ error: Error) {
         hasError = true

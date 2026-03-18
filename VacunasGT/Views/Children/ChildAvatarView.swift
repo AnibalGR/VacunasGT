@@ -12,6 +12,7 @@ import SwiftData
 struct ChildAvatarView: View {
     let childUUID: String
     let name: String
+    var photoURL: String? = nil
     var size: CGFloat = 80
     var showEditBadge: Bool = false
 
@@ -30,19 +31,24 @@ struct ChildAvatarView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Group {
-                if let data = photo?.imageData, let uiImage = UIImage(data: data) {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFill()
+                if let urlString = photoURL, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        case .failure:
+                            localOrInitialsView
+                        case .empty:
+                            ProgressView()
+                                .frame(width: size, height: size)
+                        @unknown default:
+                            localOrInitialsView
+                        }
+                    }
                 } else {
-                    // Avatar con iniciales
-                    Circle()
-                        .fill(Color.brandNavy.opacity(0.18))
-                        .overlay(
-                            Text(initials)
-                                .font(.system(size: size * 0.35, weight: .bold))
-                                .foregroundColor(.brandNavy)
-                        )
+                    localOrInitialsView
                 }
             }
             .frame(width: size, height: size)
@@ -57,6 +63,24 @@ struct ChildAvatarView: View {
                     .background(Color.white.clipShape(Circle()))
                     .offset(x: 2, y: 2)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var localOrInitialsView: some View {
+        if let data = photo?.imageData, let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else {
+            // Avatar con iniciales
+            Circle()
+                .fill(Color.brandNavy.opacity(0.18))
+                .overlay(
+                    Text(initials)
+                        .font(.system(size: size * 0.35, weight: .bold))
+                        .foregroundColor(.brandNavy)
+                )
         }
     }
 }

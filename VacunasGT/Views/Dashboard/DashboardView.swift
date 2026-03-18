@@ -124,7 +124,12 @@ struct ChildCard: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            ChildAvatarView(childUUID: child.uuid, name: child.name, size: 56)
+            ChildAvatarView(
+                childUUID: child.uuid,
+                name: child.name,
+                photoURL: child.photo_url,
+                size: 56
+            )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(child.name)
