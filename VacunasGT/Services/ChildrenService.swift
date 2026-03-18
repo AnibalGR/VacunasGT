@@ -84,6 +84,18 @@ final class ChildrenService: Sendable {
         let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
         return response.data
     }
+
+    /// Elimina la foto de perfil en el servidor
+    func deletePhoto(uuid: String) async throws -> ChildDTO {
+        let dict: [String: Any] = [
+            "_method": "PUT",
+            "delete_photo": true
+        ]
+        let body = try JSONSerialization.data(withJSONObject: dict)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(uuid)", method: "POST", body: body, requiresAuth: true)
+        let response: APIResponse<ChildDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<ChildDTO>.self)
+        return response.data
+    }
 }
 
 /// Servicio para gestionar registros de vacunación

@@ -21,8 +21,20 @@ struct ChildDetailView: View {
         VStack(spacing: 0) {
             // Header con info del niño
             VStack(spacing: 12) {
-                // Toca el avatar para cambiar la foto
-                PhotosPicker(selection: $photoItem, matching: .images) {
+                // Menú de opciones de foto
+                Menu {
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Label("Cambiar foto", systemImage: "photo")
+                    }
+                    
+                    if viewModel.selectedChildRecord?.child.photo_url != nil {
+                        Button(role: .destructive) {
+                            Task { await deletePhotoLocal() }
+                        } label: {
+                            Label("Eliminar foto", systemImage: "trash")
+                        }
+                    }
+                } label: {
                     ChildAvatarView(
                         childUUID: childUUID,
                         name: childName,
@@ -39,7 +51,7 @@ struct ChildDetailView: View {
                     .font(.title2.bold())
                     .foregroundColor(.white)
 
-                Text("Toca la foto para cambiarla")
+                Text("Toca la foto para opciones")
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.7))
             }
@@ -173,6 +185,20 @@ struct ChildDetailView: View {
         Task {
             await viewModel.uploadChildPhoto(uuid: childUUID, imageData: compressed)
         }
+    }
+
+    /// Elimina la foto local y remotamente
+    private func deletePhotoLocal() async {
+        let descriptor = FetchDescriptor<ChildPhoto>(
+            predicate: #Predicate { $0.childUUID == childUUID }
+        )
+        if let existing = try? modelContext.fetch(descriptor).first {
+            modelContext.delete(existing)
+            try? modelContext.save()
+        }
+        
+        // Sincronizar con el servidor
+        _ = await viewModel.deleteChildPhoto(uuid: childUUID)
     }
 }
 

@@ -204,6 +204,34 @@ class ChildrenViewModel: ObservableObject {
             return false
         }
     }
+
+    /// Elimina la foto de perfil en el servidor y actualiza localmente
+    func deleteChildPhoto(uuid: String) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        hasError = false
+        
+        do {
+            let updatedChild = try await childrenService.deletePhoto(uuid: uuid)
+            
+            // Actualizar en la lista local
+            if let index = children.firstIndex(where: { $0.uuid == uuid }) {
+                children[index] = updatedChild
+            }
+            
+            // Refrescar el récord detallado si es el niño seleccionado
+            if selectedChildRecord?.child.uuid == uuid {
+                await fetchChildRecord(uuid: uuid)
+            }
+            
+            isLoading = false
+            return true
+        } catch {
+            handleError(error)
+            isLoading = false
+            return false
+        }
+    }
     
     private func handleError(_ error: Error) {
         hasError = true
