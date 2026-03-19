@@ -13,6 +13,7 @@ class ChildrenViewModel: ObservableObject {
     private let childrenService = ChildrenService()
     private let vaccinationService = VaccinationService()
     private let growthService = GrowthService()
+    private let milestoneService = MilestoneService()
     
     /// Carga la lista de niños del padre
     func fetchChildren() async {
@@ -225,6 +226,52 @@ class ChildrenViewModel: ObservableObject {
             }
             
             isLoading = false
+            return true
+        } catch {
+            handleError(error)
+            isLoading = false
+            return false
+        }
+    }
+    
+    /// Agrega un nuevo hito al niño actual
+    func addMilestone(childUUID: String, milestoneCatalogId: Int, achievedAt: Date, notes: String?) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        hasError = false
+        
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        let dateString = formatter.string(from: achievedAt)
+        
+        let payload = CreateMilestoneRequest(
+            milestone_catalog_id: milestoneCatalogId,
+            achieved_at: dateString,
+            notes: (notes?.isEmpty ?? true) ? nil : notes
+        )
+        
+        do {
+            _ = try await milestoneService.recordMilestone(childUUID: childUUID, payload: payload)
+            // Refrescar récord
+            await fetchChildRecord(uuid: childUUID)
+            return true
+        } catch {
+            handleError(error)
+            isLoading = false
+            return false
+        }
+    }
+    
+    /// Elimina un hito registrado
+    func deleteMilestone(childUUID: String, milestoneId: Int) async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        hasError = false
+        
+        do {
+            try await milestoneService.deleteMilestone(childUUID: childUUID, milestoneId: milestoneId)
+            // Refrescar récord
+            await fetchChildRecord(uuid: childUUID)
             return true
         } catch {
             handleError(error)

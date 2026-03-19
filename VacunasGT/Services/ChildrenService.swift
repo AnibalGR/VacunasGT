@@ -122,3 +122,23 @@ final class GrowthService {
     }
 }
 
+/// Servicio para gestionar registros de hitos
+final class MilestoneService {
+    
+    /// Registra un nuevo hito alcanzado
+    func recordMilestone(childUUID: String, payload: CreateMilestoneRequest) async throws -> MilestoneRecordDTO {
+        let body = try JSONEncoder().encode(payload)
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/milestones", method: "POST", body: body, requiresAuth: true)
+        let response: APIResponse<MilestoneRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<MilestoneRecordDTO>.self)
+        return response.data
+    }
+    
+    /// Elimina un hito registrado
+    @discardableResult
+    func deleteMilestone(childUUID: String, milestoneId: Int) async throws -> APIMessageResponse {
+        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/milestones/\(milestoneId)", method: "DELETE", requiresAuth: true)
+        let response: APIMessageResponse = try await NetworkManager.shared.fetch(request: request, responseType: APIMessageResponse.self)
+        return response
+    }
+}
+

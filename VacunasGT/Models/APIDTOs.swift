@@ -15,6 +15,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
     let photo_url: String?
     let vaccines: [VaccinationRecordDTO]?
     let growth_measurements: [GrowthRecordDTO]?
+    let milestones: [MilestoneRecordDTO]?
 
     enum CodingKeys: String, CodingKey {
         case id, uuid, name, birth_date, gender, blood_type
@@ -23,6 +24,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         case photo_url
         case vaccines
         case growth_measurements
+        case milestones
     }
     
     init(
@@ -36,7 +38,8 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         age_in_months: Int? = nil,
         photo_url: String? = nil,
         vaccines: [VaccinationRecordDTO]? = nil,
-        growth_measurements: [GrowthRecordDTO]? = nil
+        growth_measurements: [GrowthRecordDTO]? = nil,
+        milestones: [MilestoneRecordDTO]? = nil
     ) {
         self.id = id
         self.uuid = uuid
@@ -49,6 +52,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         self.photo_url = photo_url
         self.vaccines = vaccines
         self.growth_measurements = growth_measurements
+        self.milestones = milestones
     }
 
     init(from decoder: Decoder) throws {
@@ -72,6 +76,7 @@ struct ChildDTO: Codable, Identifiable, Sendable {
         self.photo_url = try? container.decode(String.self, forKey: .photo_url)
         self.vaccines = try? container.decode([VaccinationRecordDTO].self, forKey: .vaccines)
         self.growth_measurements = try? container.decode([GrowthRecordDTO].self, forKey: .growth_measurements)
+        self.milestones = try? container.decode([MilestoneRecordDTO].self, forKey: .milestones)
     }
 }
 
@@ -246,3 +251,26 @@ struct CreateGrowthRecordRequest: Codable, Sendable {
     let notes: String?
 }
 
+
+struct MilestoneDTO: Codable, Sendable {
+    let id: Int
+    let name: String
+    let category: String
+    let expected_month_min: Int
+    let expected_month_max: Int
+    let description: String?
+}
+
+struct MilestoneRecordDTO: Codable, Sendable {
+    let id: Int
+    let milestone_catalog_id: Int
+    let achieved_at: String
+    let notes: String?
+    let milestone: MilestoneDTO?
+}
+
+struct CreateMilestoneRequest: Codable, Sendable {
+    let milestone_catalog_id: Int
+    let achieved_at: String
+    let notes: String?
+}

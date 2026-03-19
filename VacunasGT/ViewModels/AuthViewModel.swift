@@ -35,9 +35,9 @@ class AuthViewModel: ObservableObject {
                 print("Fallo al obtener perfil en checkSession: \(error)")
             }
 
-            // Sincronizar catálogo de vacunas en background al restaurar sesión
             if let context = modelContext {
                 await VaccineManager.shared.syncFromServer(modelContext: context)
+                await MilestoneManager.shared.syncFromServer(modelContext: context)
             }
         }
     }
@@ -59,9 +59,9 @@ class AuthViewModel: ObservableObject {
             }
             self.isAuthenticated = true
 
-            // Sincronizar catálogo de vacunas del servidor tras el login
             if let context = modelContext {
                 await VaccineManager.shared.syncFromServer(modelContext: context)
+                await MilestoneManager.shared.syncFromServer(modelContext: context)
             }
         } catch {
             self.handleError(error)
@@ -87,9 +87,9 @@ class AuthViewModel: ObservableObject {
             }
             self.isAuthenticated = true
 
-            // Sincronizar catálogo de vacunas del servidor tras el registro
             if let context = modelContext {
                 await VaccineManager.shared.syncFromServer(modelContext: context)
+                await MilestoneManager.shared.syncFromServer(modelContext: context)
             }
         } catch {
             self.handleError(error)

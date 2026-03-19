@@ -65,6 +65,7 @@ struct ChildDetailView: View {
                 Text("Vacunas").tag(0)
                 Text("Crecimiento").tag(1)
                 Text("Info").tag(2)
+                Text("Hitos").tag(3)
             }
             .pickerStyle(.segmented)
             .tint(.brandNavy)
@@ -82,8 +83,10 @@ struct ChildDetailView: View {
                         VaccinationsList(vaccinations: record.vaccinations)
                     } else if selectedTab == 1 {
                         GrowthRecordList(records: record.growth_records)
-                    } else {
+                    } else if selectedTab == 2 {
                         ChildInfoView(child: record.child)
+                    } else {
+                        MilestonesListView(childUUID: childUUID)
                     }
                 } else {
                     Text("No se pudo cargar la información")
@@ -94,15 +97,17 @@ struct ChildDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    if selectedTab == 0 {
-                        showingAddVaccination = true
-                    } else if selectedTab == 1 {
-                        showingAddGrowth = true
+                if selectedTab == 0 || selectedTab == 1 {
+                    Button(action: {
+                        if selectedTab == 0 {
+                            showingAddVaccination = true
+                        } else if selectedTab == 1 {
+                            showingAddGrowth = true
+                        }
+                    }) {
+                        Image(systemName: "plus")
+                            .foregroundColor(.white)
                     }
-                }) {
-                    Image(systemName: "plus")
-                        .foregroundColor(.white)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
