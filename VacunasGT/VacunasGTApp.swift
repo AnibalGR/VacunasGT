@@ -18,6 +18,7 @@ struct VacunasGTApp: App {
             VaccinationRecord.self,
             GrowthRecord.self,
             ChildPhoto.self,
+            Milestone.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

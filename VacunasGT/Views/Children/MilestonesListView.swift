@@ -11,7 +11,7 @@ struct MilestonesListView: View {
     
     var body: some View {
         ZStack {
-            Color.brandLightGray.edgesIgnoringSafeArea(.all)
+            Color(.systemGray6).ignoresSafeArea()
             
             VStack(spacing: 0) {
                 // Título y Botón de Agregar
@@ -31,7 +31,7 @@ struct MilestonesListView: View {
                         Text("Registrar Hito")
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(.brandAccent)
+                    .tint(Color.accentColor)
                 }
                 .padding()
                 
@@ -99,7 +99,7 @@ struct MilestoneCategorySection: View {
                 if let milestone = record.milestone {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: "checkmark.seal.fill")
-                            .foregroundColor(.brandAccent)
+                            .foregroundColor(.accentColor)
                             .font(.title3)
                             
                         VStack(alignment: .leading, spacing: 4) {
@@ -173,3 +173,4 @@ struct MilestoneCategorySection: View {
         return dateString
     }
 }
+

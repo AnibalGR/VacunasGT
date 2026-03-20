@@ -83,7 +83,7 @@ struct AddMilestoneView: View {
                     }
                     .bold()
                     .disabled(selectedMilestoneId == nil || isSaving)
-                    .foregroundColor((selectedMilestoneId == nil || isSaving) ? .gray : .brandAccent)
+                    .foregroundColor((selectedMilestoneId == nil || isSaving) ? .gray : .brandNavy)
                 }
             }
             .overlay {

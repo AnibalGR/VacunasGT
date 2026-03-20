@@ -128,26 +128,42 @@ struct ChildCard: View {
                 childUUID: child.uuid,
                 name: child.name,
                 photoURL: child.photo_url,
-                size: 56
+                size: 56,
+                isMale: child.isMale
             )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(child.name)
                     .font(.headline)
-                    .foregroundColor(.brandNavy)
+                    .foregroundColor(child.isMale ? .blue : .pink)
 
                 Text(child.genderDisplay)
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(child.isMale ? .blue.opacity(0.7) : .pink.opacity(0.7))
             }
 
             Spacer()
 
             Image(systemName: "chevron.right")
                 .font(.caption.bold())
-                .foregroundColor(.brandNavy.opacity(0.3))
+                .foregroundColor(child.isMale ? .blue.opacity(0.4) : .pink.opacity(0.4))
         }
-        .cardStyle()
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+                .shadow(
+                    color: child.isMale ? Color.blue.opacity(0.15) : Color.pink.opacity(0.15),
+                    radius: 8, x: 0, y: 4
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    child.isMale ? Color.blue.opacity(0.2) : Color.pink.opacity(0.2),
+                    lineWidth: 1.5
+                )
+        )
     }
 }
 

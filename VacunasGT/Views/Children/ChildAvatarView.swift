@@ -15,6 +15,7 @@ struct ChildAvatarView: View {
     var photoURL: String? = nil
     var size: CGFloat = 80
     var showEditBadge: Bool = false
+    var isMale: Bool = true
 
     @Query private var photos: [ChildPhoto]
 
@@ -26,6 +27,10 @@ struct ChildAvatarView: View {
         let parts = name.split(separator: " ")
         let chars = parts.prefix(2).compactMap(\.first).map(String.init)
         return chars.joined().uppercased()
+    }
+
+    private var themeColor: Color {
+        isMale ? Color.blue : Color.pink
     }
 
     var body: some View {
@@ -54,12 +59,12 @@ struct ChildAvatarView: View {
             .frame(width: size, height: size)
             .clipShape(Circle())
             .overlay(Circle().stroke(Color.white, lineWidth: 3))
-            .shadow(color: .black.opacity(0.15), radius: 4, x: 0, y: 2)
+            .shadow(color: themeColor.opacity(0.3), radius: 6, x: 0, y: 3)
 
             if showEditBadge {
                 Image(systemName: "camera.circle.fill")
                     .font(.system(size: size * 0.32))
-                    .foregroundColor(.brandNavy)
+                    .foregroundColor(themeColor)
                     .background(Color.white.clipShape(Circle()))
                     .offset(x: 2, y: 2)
             }
@@ -75,11 +80,11 @@ struct ChildAvatarView: View {
         } else {
             // Avatar con iniciales
             Circle()
-                .fill(Color.brandNavy.opacity(0.18))
+                .fill(themeColor.opacity(0.15))
                 .overlay(
                     Text(initials)
                         .font(.system(size: size * 0.35, weight: .bold))
-                        .foregroundColor(.brandNavy)
+                        .foregroundColor(themeColor)
                 )
         }
     }

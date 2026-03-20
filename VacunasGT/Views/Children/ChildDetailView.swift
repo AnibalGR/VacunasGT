@@ -40,7 +40,8 @@ struct ChildDetailView: View {
                         name: childName,
                         photoURL: viewModel.selectedChildRecord?.child.photo_url,
                         size: 88,
-                        showEditBadge: true
+                        showEditBadge: true,
+                        isMale: viewModel.selectedChildRecord?.child.isMale ?? true
                     )
                 }
                 .photosPicker(isPresented: $showingPhotoPicker, selection: $photoItem, matching: .images)
