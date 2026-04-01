@@ -266,6 +266,7 @@ struct MilestoneRecordDTO: Codable, Sendable {
     let milestone_catalog_id: Int
     let achieved_at: String
     let notes: String?
+    let photo_url: String?
     let milestone: MilestoneDTO?
 }
 

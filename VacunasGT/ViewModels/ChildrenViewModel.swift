@@ -235,7 +235,7 @@ class ChildrenViewModel: ObservableObject {
     }
     
     /// Agrega un nuevo hito al niño actual
-    func addMilestone(childUUID: String, milestoneCatalogId: Int, achievedAt: Date, notes: String?) async -> Bool {
+    func addMilestone(childUUID: String, milestoneCatalogId: Int, achievedAt: Date, notes: String?, photoData: Data? = nil) async -> Bool {
         isLoading = true
         errorMessage = nil
         hasError = false
@@ -251,7 +251,7 @@ class ChildrenViewModel: ObservableObject {
         )
         
         do {
-            _ = try await milestoneService.recordMilestone(childUUID: childUUID, payload: payload)
+            _ = try await milestoneService.recordMilestone(childUUID: childUUID, payload: payload, photoData: photoData)
             // Refrescar récord
             await fetchChildRecord(uuid: childUUID)
             return true

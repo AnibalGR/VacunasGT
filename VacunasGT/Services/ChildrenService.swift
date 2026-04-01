@@ -126,11 +126,48 @@ final class GrowthService {
 final class MilestoneService {
     
     /// Registra un nuevo hito alcanzado
-    func recordMilestone(childUUID: String, payload: CreateMilestoneRequest) async throws -> MilestoneRecordDTO {
-        let body = try JSONEncoder().encode(payload)
-        let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/milestones", method: "POST", body: body, requiresAuth: true)
-        let response: APIResponse<MilestoneRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<MilestoneRecordDTO>.self)
-        return response.data
+    func recordMilestone(childUUID: String, payload: CreateMilestoneRequest, photoData: Data? = nil) async throws -> MilestoneRecordDTO {
+        if let photo = photoData {
+            // Petición Multipart si hay foto
+            let boundary = "Boundary-\(UUID().uuidString)"
+            var request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/milestones", method: "POST", requiresAuth: true)
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+            var body = Data()
+
+            // Campos de texto
+            let textFields: [String: String] = [
+                "milestone_catalog_id": "\(payload.milestone_catalog_id)",
+                "achieved_at": payload.achieved_at,
+                "notes": payload.notes ?? ""
+            ]
+            
+            for (key, value) in textFields {
+                if key == "notes" && value.isEmpty { continue }
+                body.append("--\(boundary)\r\n".data(using: .utf8)!)
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!)
+                body.append("\(value)\r\n".data(using: .utf8)!)
+            }
+
+            // Campo de imagen
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"photo\"; filename=\"milestone.jpg\"\r\n".data(using: .utf8)!)
+            body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+            body.append(photo)
+            body.append("\r\n".data(using: .utf8)!)
+
+            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+            request.httpBody = body
+
+            let response: APIResponse<MilestoneRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<MilestoneRecordDTO>.self)
+            return response.data
+        } else {
+            // Petición JSON si no hay foto
+            let body = try JSONEncoder().encode(payload)
+            let request = try NetworkManager.shared.createRequest(endpoint: "/children/\(childUUID)/milestones", method: "POST", body: body, requiresAuth: true)
+            let response: APIResponse<MilestoneRecordDTO> = try await NetworkManager.shared.fetch(request: request, responseType: APIResponse<MilestoneRecordDTO>.self)
+            return response.data
+        }
     }
     
     /// Elimina un hito registrado

@@ -63,9 +63,9 @@ struct ChildDetailView: View {
 
             // Selector de Pestañas
             Picker("Sección", selection: $selectedTab) {
-                Text("Vacunas").tag(0)
-                Text("Crecimiento").tag(1)
-                Text("Info").tag(2)
+                Text("Info").tag(0)
+                Text("Vacunas").tag(1)
+                Text("Crecimiento").tag(2)
                 Text("Hitos").tag(3)
             }
             .pickerStyle(.segmented)
@@ -81,11 +81,11 @@ struct ChildDetailView: View {
                     ProgressView()
                 } else if let record = viewModel.selectedChildRecord {
                     if selectedTab == 0 {
-                        VaccinationsList(vaccinations: record.vaccinations)
-                    } else if selectedTab == 1 {
-                        GrowthRecordList(records: record.growth_records)
-                    } else if selectedTab == 2 {
                         ChildInfoView(child: record.child)
+                    } else if selectedTab == 1 {
+                        VaccinationsList(vaccinations: record.vaccinations)
+                    } else if selectedTab == 2 {
+                        GrowthRecordList(records: record.growth_records)
                     } else {
                         MilestonesListView(childUUID: childUUID)
                     }
@@ -98,11 +98,11 @@ struct ChildDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                if selectedTab == 0 || selectedTab == 1 {
+                if selectedTab == 1 || selectedTab == 2 {
                     Button(action: {
-                        if selectedTab == 0 {
+                        if selectedTab == 1 {
                             showingAddVaccination = true
-                        } else if selectedTab == 1 {
+                        } else if selectedTab == 2 {
                             showingAddGrowth = true
                         }
                     }) {
